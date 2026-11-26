@@ -9,6 +9,10 @@ const PROVIDERS = {
   nvidia: {
     url: "https://integrate.api.nvidia.com/v1",
     key: process.env.NVIDIA_API_KEY
+  },
+  openrouter: {
+    url: "https://openrouter.ai/api/v1",
+    key: process.env.OPENROUTER_API_KEY
   }
 };
 
@@ -26,6 +30,7 @@ const getProvider = (provider) => {
   return config;
 };
 
+// Fetch provider-specific models
 const getModels = async (provider) => {
   const config = getProvider(provider);
 
@@ -36,20 +41,51 @@ const getModels = async (provider) => {
     timeout: 20000
   });
 
-  return response.data.data
+  const availableModels = response.data.data || [];
+
+  if (provider === "openrouter") {
+    const freeModels = availableModels
+      .filter((model) => {
+        return (
+          model.id.endsWith(":free") &&
+          Number(model.pricing?.prompt) === 0 &&
+          Number(model.pricing?.completion) === 0
+        );
+      })
+      .map((model) => ({
+        id: model.id,
+        name: `${model.name} (Free)`
+      }))
+      .sort((a, b) => a.name.localeCompare(b.name));
+
+    return [
+      {
+        id: "openrouter/free",
+        name: "Auto-select Free Model"
+      },
+      ...freeModels
+    ];
+  }
+
+  return availableModels
     .map((model) => ({
       id: model.id,
-      name: model.id
+      name: model.name || model.id
     }))
     .sort((a, b) => a.name.localeCompare(b.name));
 };
 
+// Generate response using selected provider
 const generateChatResponse = async ({
   provider,
   model,
   messages
 }) => {
   const config = getProvider(provider);
+
+  if (!model) {
+    throw new Error("Please select an AI model");
+  }
 
   const response = await axios.post(
     `${config.url}/chat/completions`,

@@ -5,12 +5,11 @@ const fetchModels = async (req, res) => {
   try {
     const { provider } = req.params;
 
-    if (!["openai", "nvidia"].includes(provider)) {
+    if (!["openai", "nvidia", "openrouter"].includes(provider)) {
       return res.status(400).json({
         success: false,
-        message: "Provider must be openai or nvidia"
+        message: "Provider must be openai, nvidia, or openrouter"
       });
-      
     }
 
     const models = await getModels(provider);
@@ -21,12 +20,17 @@ const fetchModels = async (req, res) => {
       count: models.length,
       models
     });
+
   } catch (error) {
-    console.error("Fetch models error:", error.response?.data || error.message);
+    console.error(
+      "Fetch models error:",
+      error.response?.data || error.message
+    );
 
     return res.status(error.response?.status || 500).json({
       success: false,
       message:
+        error.response?.data?.error?.message ||
         error.response?.data?.message ||
         error.message ||
         "Unable to fetch models"

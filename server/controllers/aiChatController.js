@@ -126,7 +126,7 @@ const chatWithAI = async (req, res) => {
       messages
     } = req.body;
 
-    if (!["openai", "nvidia"].includes(provider)) {
+    if (!["openai", "nvidia", "openrouter"].includes(provider)) {
       return res.status(400).json({
         success: false,
         message: "Select OpenAI or NVIDIA"

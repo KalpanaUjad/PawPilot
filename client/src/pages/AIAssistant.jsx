@@ -9,7 +9,7 @@ import {
 import { getPets } from "../services/petServices";
 
 function AIAssistant() {
-  const [provider, setProvider] = useState("openai");
+  const [provider, setProvider] = useState("openrouter");
   const [models, setModels] = useState([]);
   const [selectedModel, setSelectedModel] = useState("");
 
@@ -158,6 +158,7 @@ function AIAssistant() {
             >
               <option value="openai">OpenAI</option>
               <option value="nvidia">NVIDIA</option>
+              <option value="openrouter">OpenRouter</option>
             </select>
           </div>
 

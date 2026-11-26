@@ -17,7 +17,6 @@ function Dashboard() {
 
         
          <Link to="/medical-history">Medical History</Link>
-         <Link to="/ai-assistant">AI Pet Care Assistant</Link>
 <div className="dashboard-cards">
           <div className="dashboard-card">
             <h3>🐶 My Pets</h3>
@@ -36,7 +35,7 @@ function Dashboard() {
 
           <div className="dashboard-card">
             <h3>🤖 AI Pet Assistant</h3>
-            <p>Get AI-powered pet care guidance.</p>
+            <Link to="/ai-assistant">AI Pet Care Assistant</Link>
           </div>
         </div>
       </main>
